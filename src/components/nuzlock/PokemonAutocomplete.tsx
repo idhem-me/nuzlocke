@@ -6,9 +6,13 @@ import {
   offset,
   shift,
   size,
+  useDismiss,
   useFloating,
+  useInteractions,
+  useListNavigation,
+  useRole,
 } from "@floating-ui/react";
-import { useEffect, useId, useLayoutEffect, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils/cn";
 import { stateLayer } from "@/lib/utils/state-layer";
@@ -31,16 +35,18 @@ export function PokemonAutocomplete({
 }: PokemonAutocompleteProps) {
   const [open, setOpen] = useState(false);
   const [focused, setFocused] = useState(false);
-  const [highlight, setHighlight] = useState(0);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [mounted, setMounted] = useState(false);
+  const listRef = useRef<Array<HTMLElement | null>>([]);
   const inputId = useId();
   const listboxId = `${inputId}-listbox`;
   const suggestions = open && value.trim() ? search(value) : [];
   const floated = focused || value.length > 0;
   const showList = open && suggestions.length > 0;
 
-  const { refs, floatingStyles, update } = useFloating({
-    open: showList,
+  const { refs, floatingStyles, context, update } = useFloating({
+    open,
+    onOpenChange: setOpen,
     strategy: "fixed",
     placement: "bottom-start",
     middleware: [
@@ -60,6 +66,26 @@ export function PokemonAutocomplete({
     whileElementsMounted: autoUpdate,
   });
 
+  const dismiss = useDismiss(context, {
+    outsidePressEvent: "pointerdown",
+  });
+
+  const listNavigation = useListNavigation(context, {
+    listRef,
+    activeIndex,
+    onNavigate: setActiveIndex,
+    virtual: true,
+    loop: true,
+  });
+
+  const role = useRole(context, { role: "combobox" });
+
+  const { getReferenceProps, getFloatingProps, getItemProps } = useInteractions([
+    dismiss,
+    listNavigation,
+    role,
+  ]);
+
   useEffect(() => setMounted(true), []);
 
   useLayoutEffect(() => {
@@ -69,83 +95,56 @@ export function PokemonAutocomplete({
   }, [showList, update, suggestions.length]);
 
   useEffect(() => {
-    if (!showList) return;
-
-    function handleClickOutside(e: MouseEvent) {
-      const target = e.target as Node;
-      if (
-        refs.domReference.current?.contains(target) ||
-        refs.floating.current?.contains(target)
-      ) {
-        return;
-      }
-      setOpen(false);
+    listRef.current = listRef.current.slice(0, suggestions.length);
+    if (showList) {
+      setActiveIndex(0);
+    } else {
+      setActiveIndex(null);
     }
+  }, [showList, suggestions.length, value]);
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [showList, refs.domReference, refs.floating]);
-
-  useEffect(() => {
-    if (!showList) return;
-    document
-      .getElementById(`${inputId}-option-${highlight}`)
-      ?.scrollIntoView({ block: "nearest" });
-  }, [highlight, showList, inputId]);
-
-  function handleKeyDown(e: React.KeyboardEvent) {
-    if (!open || suggestions.length === 0) return;
-
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      setHighlight((h) => Math.min(h + 1, suggestions.length - 1));
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      setHighlight((h) => Math.max(h - 1, 0));
-    } else if (e.key === "Enter" && suggestions[highlight]) {
-      e.preventDefault();
-      onSelect(suggestions[highlight]);
-      setOpen(false);
-    } else if (e.key === "Escape") {
-      setOpen(false);
-    }
+  function selectSpecies(species: PokemonSpeciesEntry) {
+    onSelect(species);
+    setOpen(false);
   }
 
   const listbox = showList ? (
     <ul
-      ref={refs.setFloating}
-      id={listboxId}
-      style={floatingStyles}
-      className={cn(
-        "z-50 overflow-y-auto py-2",
-        "rounded-[var(--md-shape-corner-extra-small)]",
-        "bg-[var(--md-sys-color-surface-container)]",
-        "shadow-[var(--md-elevation-2)]",
-        "border border-[var(--md-sys-color-outline-variant)]",
-      )}
-      role="listbox"
+      {...getFloatingProps({
+        ref: refs.setFloating,
+        id: listboxId,
+        style: floatingStyles,
+        className: cn(
+          "pointer-events-auto z-50 overflow-y-auto py-2",
+          "rounded-[var(--md-shape-corner-extra-small)]",
+          "bg-[var(--md-sys-color-surface-container)]",
+          "shadow-[var(--md-elevation-2)]",
+          "border border-[var(--md-sys-color-outline-variant)]",
+        ),
+      })}
     >
       {suggestions.map((species, i) => (
-        <li
-          key={species.id}
-          id={`${inputId}-option-${i}`}
-          role="option"
-          aria-selected={i === highlight}
-        >
+        <li key={species.id}>
           <button
             type="button"
-            className={cn(
-              stateLayer(),
-              "w-full min-h-12 px-4 text-left md-body-large",
-              i === highlight
-                ? "bg-[var(--md-sys-color-secondary-container)] text-[var(--md-sys-color-on-secondary-container)]"
-                : "text-[var(--md-sys-color-on-surface)]",
-            )}
-            onMouseDown={(e) => {
-              e.preventDefault();
-              onSelect(species);
-              setOpen(false);
-            }}
+            {...getItemProps({
+              ref(node) {
+                listRef.current[i] = node;
+              },
+              active: activeIndex === i,
+              selected: false,
+              onPointerDown(e) {
+                e.preventDefault();
+                selectSpecies(species);
+              },
+              className: cn(
+                stateLayer(),
+                "w-full min-h-12 px-4 text-left md-body-large",
+                i === activeIndex
+                  ? "bg-[var(--md-sys-color-secondary-container)] text-[var(--md-sys-color-on-secondary-container)]"
+                  : "text-[var(--md-sys-color-on-surface)]",
+              ),
+            })}
           >
             {species.nameFr}
           </button>
@@ -158,47 +157,57 @@ export function PokemonAutocomplete({
     <div className="relative w-full">
       <div className="relative">
         <input
-          ref={refs.setReference}
-          id={inputId}
-          disabled={disabled}
-          value={value}
-          placeholder=" "
-          autoComplete="off"
-          role="combobox"
-          aria-expanded={showList}
-          aria-controls={listboxId}
-          aria-autocomplete="list"
-          aria-activedescendant={
-            showList && suggestions[highlight]
-              ? `${inputId}-option-${highlight}`
-              : undefined
-          }
-          className={cn(
-            "peer h-14 w-full rounded-[var(--md-shape-corner-extra-small)] px-4 pt-4 pb-1",
-            "bg-transparent text-[var(--md-sys-color-on-surface)] md-body-large",
-            "border border-[var(--md-sys-color-outline)]",
-            "placeholder:text-transparent",
-            "focus:outline-none focus:border-2 focus:border-[var(--md-sys-color-primary)] focus:px-[15px] focus:pt-[15px]",
-            "disabled:text-[var(--md-sys-color-on-surface-disabled)] disabled:border-[var(--md-sys-color-on-surface)] disabled:opacity-[0.38] disabled:cursor-not-allowed",
-          )}
-          onChange={(e) => {
-            onChange(e.target.value);
-            setHighlight(0);
-            setOpen(true);
-          }}
-          onFocus={() => {
-            setFocused(true);
-            setOpen(true);
-          }}
-          onBlur={(e) => {
-            setFocused(false);
-            const related = e.relatedTarget as Node | null;
-            if (related && refs.floating.current?.contains(related)) {
-              return;
-            }
-            setOpen(false);
-          }}
-          onKeyDown={handleKeyDown}
+          {...getReferenceProps({
+            ref: refs.setReference,
+            id: inputId,
+            disabled,
+            value,
+            placeholder: " ",
+            autoComplete: "off",
+            autoCorrect: "off",
+            autoCapitalize: "off",
+            spellCheck: false,
+            className: cn(
+              "peer h-14 w-full rounded-[var(--md-shape-corner-extra-small)] px-4 pt-4 pb-1",
+              "bg-transparent text-[var(--md-sys-color-on-surface)] md-body-large",
+              "border border-[var(--md-sys-color-outline)]",
+              "placeholder:text-transparent",
+              "focus:outline-none focus:border-2 focus:border-[var(--md-sys-color-primary)] focus:px-[15px] focus:pt-[15px]",
+              "disabled:text-[var(--md-sys-color-on-surface-disabled)] disabled:border-[var(--md-sys-color-on-surface)] disabled:opacity-[0.38] disabled:cursor-not-allowed",
+            ),
+            onChange(e) {
+              onChange((e.target as HTMLInputElement).value);
+              setOpen(true);
+            },
+            onFocus() {
+              setFocused(true);
+              setOpen(true);
+            },
+            onBlur() {
+              setFocused(false);
+              // iOS : relatedTarget est null au tap sur le portal — ne pas fermer
+              // immédiatement ; laisser pointerdown sur l'option se terminer.
+              window.setTimeout(() => {
+                const active = document.activeElement;
+                if (
+                  !refs.floating.current?.contains(active) &&
+                  active !== refs.domReference.current
+                ) {
+                  setOpen(false);
+                }
+              }, 0);
+            },
+            onKeyDown(e) {
+              if (
+                e.key === "Enter" &&
+                activeIndex !== null &&
+                suggestions[activeIndex]
+              ) {
+                e.preventDefault();
+                selectSpecies(suggestions[activeIndex]);
+              }
+            },
+          })}
         />
         <label
           htmlFor={inputId}

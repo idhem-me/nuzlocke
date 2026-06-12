@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.3.2] — 2026-06-12
+
+### Corrigé
+- Autocomplétion Pokémon sur iPhone (Safari iOS) : sélection des suggestions au tap — migration vers les hooks Floating UI (`useDismiss`, `useListNavigation`, `useRole`, `useInteractions`) pour gérer correctement le tactile ; suppression de la fermeture immédiate au `blur` (cause principale : `relatedTarget` null sur iOS) ; sélection via `onPointerDown` + `preventDefault` ; attributs anti-interférence iOS sur l'input (`autoCorrect`, `autoCapitalize`, `spellCheck`)
+
 ## [0.3.1] — 2026-06-12
 
 ### Modifié
