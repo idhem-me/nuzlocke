@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nuzlocke Tracker
 
-## Getting Started
+PWA de suivi de Nuzlocke Pokémon — stockage 100 % local, optimisée pour iPhone.
 
-First, run the development server:
+## Fonctionnalités
+
+- Création et gestion de Nuzlocks (Diamant Étincelant / Perle Scintillante)
+- Suivi zone par zone avec autocomplétion Pokémon (noms FR)
+- Sprites via PokéAPI, cache local IndexedDB
+- Mode hors-ligne pour consulter vos runs existants
+- Installable sur l'écran d'accueil (iOS / Android)
+
+## Stack
+
+- Next.js 16 (App Router) + TypeScript
+- Tailwind CSS v4
+- IndexedDB (`idb`)
+- PWA via Serwist
+- PokéAPI
+
+## Développement local
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrir [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+> Le service worker est désactivé en développement. Tester le mode PWA avec un build de production.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+## Déploiement sur Vercel
 
-To learn more about Next.js, take a look at the following resources:
+1. Pousser le projet sur GitHub (ou GitLab / Bitbucket).
+2. Se connecter sur [vercel.com](https://vercel.com) et importer le dépôt.
+3. Vercel détecte automatiquement Next.js — aucune configuration spéciale requise.
+4. Déployer. Le build exécute `next build` qui génère aussi le service worker.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Variables d'environnement
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Aucune variable requise pour la V1 (pas de backend, pas de clé API).
 
-## Deploy on Vercel
+### PWA sur iPhone
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Ouvrir l'app dans Safari.
+2. Appuyer sur **Partager** → **Sur l'écran d'accueil**.
+3. L'app s'ouvre en mode standalone.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> Au premier lancement, l'app télécharge la liste des Pokémon depuis PokéAPI (~1025 espèces). Une connexion internet est nécessaire pour cette étape initiale.
+
+## Structure
+
+Voir `.cursorrules` et `PM.md` pour le contexte projet et la roadmap.
+
+## Licence
+
+Projet personnel — usage libre.

@@ -1,26 +1,252 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Color roles — MD3 monochrome */
+  --md-sys-color-background: #fafafa;
+  --md-sys-color-on-background: #1a1a1a;
+  --md-sys-color-surface: #ffffff;
+  --md-sys-color-on-surface: #1a1a1a;
+  --md-sys-color-surface-variant: #f0f0f0;
+  --md-sys-color-on-surface-variant: #5c5c5c;
+  --md-sys-color-outline: #797979;
+  --md-sys-color-outline-variant: #d4d4d4;
+  --md-sys-color-primary: #1a1a1a;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #e8e8e8;
+  --md-sys-color-on-primary-container: #1a1a1a;
+  --md-sys-color-secondary-container: #e8e8e8;
+  --md-sys-color-on-secondary-container: #1a1a1a;
+  --md-sys-color-error: #ba1a1a;
+  --md-sys-color-on-error: #ffffff;
+  --md-sys-color-error-container: #ffdad6;
+  --md-sys-color-on-error-container: #410002;
+  --md-sys-color-scrim: rgba(0, 0, 0, 0.32);
+  --md-sys-color-surface-container-lowest: #ffffff;
+  --md-sys-color-surface-container-low: #f5f5f5;
+  --md-sys-color-surface-container: #f0f0f0;
+  --md-sys-color-surface-container-high: #e8e8e8;
+  --md-sys-color-surface-container-highest: #e0e0e0;
+  --md-sys-color-disabled: #9e9e9e;
+  --md-sys-color-disabled-surface: #f0f0f0;
+  --md-sys-color-on-surface-disabled: rgba(26, 26, 26, 0.38);
+  --md-sys-color-inverse-surface: #2b2b2b;
+  --md-sys-color-inverse-on-surface: #fafafa;
+
+  /* State layer opacities */
+  --md-state-hover: 0.08;
+  --md-state-focus: 0.12;
+  --md-state-pressed: 0.12;
+
+  /* Elevation */
+  --md-elevation-1: 0 1px 2px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+  --md-elevation-2: 0 2px 6px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --md-elevation-3: 0 4px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
+
+  /* Shape */
+  --md-shape-corner-extra-small: 4px;
+  --md-shape-corner-small: 8px;
+  --md-shape-corner-medium: 12px;
+  --md-shape-corner-large: 16px;
+  --md-shape-corner-extra-large: 28px;
+  --md-shape-corner-full: 9999px;
+
+  /* Layout */
+  --md-top-app-bar-height: 64px;
+  --nav-height: 80px;
+  --nav-rail-width: 80px;
+  --fab-size: 56px;
+  --form-max-width: 560px;
+
+  /* Typography scale — MD3 */
+  --md-typescale-display-large-size: 57px;
+  --md-typescale-display-large-line: 64px;
+  --md-typescale-headline-large-size: 32px;
+  --md-typescale-headline-large-line: 40px;
+  --md-typescale-headline-small-size: 24px;
+  --md-typescale-headline-small-line: 32px;
+  --md-typescale-title-large-size: 22px;
+  --md-typescale-title-large-line: 28px;
+  --md-typescale-title-medium-size: 16px;
+  --md-typescale-title-medium-line: 24px;
+  --md-typescale-title-small-size: 14px;
+  --md-typescale-title-small-line: 20px;
+  --md-typescale-body-large-size: 16px;
+  --md-typescale-body-large-line: 24px;
+  --md-typescale-body-medium-size: 14px;
+  --md-typescale-body-medium-line: 20px;
+  --md-typescale-body-small-size: 12px;
+  --md-typescale-body-small-line: 16px;
+  --md-typescale-label-large-size: 14px;
+  --md-typescale-label-large-line: 20px;
+  --md-typescale-label-medium-size: 12px;
+  --md-typescale-label-medium-line: 16px;
+  --md-typescale-label-small-size: 11px;
+  --md-typescale-label-small-line: 16px;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--md-sys-color-background);
+  --color-foreground: var(--md-sys-color-on-surface);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100%;
+  background: var(--md-sys-color-background);
+  color: var(--md-sys-color-on-surface);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-size: var(--md-typescale-body-large-size);
+  line-height: var(--md-typescale-body-large-line);
+}
+
+/* MD3 type classes */
+.md-headline-small {
+  font-size: var(--md-typescale-headline-small-size);
+  line-height: var(--md-typescale-headline-small-line);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.md-title-large {
+  font-size: var(--md-typescale-title-large-size);
+  line-height: var(--md-typescale-title-large-line);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.md-title-medium {
+  font-size: var(--md-typescale-title-medium-size);
+  line-height: var(--md-typescale-title-medium-line);
+  font-weight: 500;
+  letter-spacing: 0.15px;
+}
+
+.md-title-small {
+  font-size: var(--md-typescale-title-small-size);
+  line-height: var(--md-typescale-title-small-line);
+  font-weight: 500;
+  letter-spacing: 0.1px;
+}
+
+.md-body-large {
+  font-size: var(--md-typescale-body-large-size);
+  line-height: var(--md-typescale-body-large-line);
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+
+.md-body-medium {
+  font-size: var(--md-typescale-body-medium-size);
+  line-height: var(--md-typescale-body-medium-line);
+  font-weight: 400;
+  letter-spacing: 0.25px;
+}
+
+.md-body-small {
+  font-size: var(--md-typescale-body-small-size);
+  line-height: var(--md-typescale-body-small-line);
+  font-weight: 400;
+  letter-spacing: 0.4px;
+}
+
+.md-label-large {
+  font-size: var(--md-typescale-label-large-size);
+  line-height: var(--md-typescale-label-large-line);
+  font-weight: 500;
+  letter-spacing: 0.1px;
+}
+
+.md-label-medium {
+  font-size: var(--md-typescale-label-medium-size);
+  line-height: var(--md-typescale-label-medium-line);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.md-label-small {
+  font-size: var(--md-typescale-label-small-size);
+  line-height: var(--md-typescale-label-small-line);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* Labels navigation — line-height généreux pour les descendantes (g, p, y…) */
+.md-nav-label {
+  font-size: var(--md-typescale-label-medium-size);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  line-height: 1.35;
+  overflow: visible;
+  white-space: nowrap;
+}
+
+/* State layer utility */
+.md-state-layer {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.md-state-layer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: currentColor;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  z-index: 0;
+}
+
+.md-state-layer > * {
+  position: relative;
+  z-index: 1;
+}
+
+@media (hover: hover) {
+  .md-state-layer:hover::before {
+    opacity: var(--md-state-hover);
+  }
+}
+
+.md-state-layer:focus-visible::before {
+  opacity: var(--md-state-focus);
+}
+
+.md-state-layer:active::before {
+  opacity: var(--md-state-pressed);
+}
+
+.md-state-layer:disabled::before,
+.md-state-layer[aria-disabled="true"]::before {
+  opacity: 0;
+}
+
+/* Safe area for iOS notch / home indicator */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+@keyframes md-progress-indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
 }

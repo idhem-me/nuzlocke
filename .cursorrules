@@ -1,0 +1,63 @@
+# Nuzlocke Tracker — Contexte projet
+
+## Qu'est-ce que c'est ?
+PWA de suivi de Nuzlocke Pokémon. Stockage 100 % local (IndexedDB). Pas de backend, pas de compte.
+
+## Stack
+- Next.js App Router + TypeScript
+- Tailwind CSS v4, design Material Design 3, thème noir/blanc sobre
+- IndexedDB via `idb`, encapsulé dans `src/lib/storage/`
+- PokéAPI pour noms FR (species) et sprites, avec cache IndexedDB
+- PWA via Serwist (`@serwist/next`)
+- Déploiement cible : Vercel
+
+## Langue
+- Interface entièrement en **français**
+- Noms de Pokémon en **français**
+
+## Structure clé
+```
+src/
+  app/           → pages (/, /nouveau, /regles, /nuzlock/[id])
+  components/    → ui/ (MD3), layout/, nuzlock/
+  data/games/    → registre jeux + zones par région
+  lib/storage/   → abstraction IndexedDB (nuzlocks, cache pokemon)
+  lib/pokemon/   → API PokéAPI + cache
+  types/         → interfaces TypeScript
+  hooks/         → useNuzlocks, useNuzlock, usePokemonSpecies
+```
+
+## Data model
+- `Game` : id, name, zoneListId, platform
+- `Zone` / `ZoneList` : zones d'un jeu
+- `Nuzlock` : id, name, gameId, captures Record<zoneId, Capture|null>
+- `Capture` : speciesId, speciesName, spriteUrl, nickname, captureFailed
+
+## Conventions code
+- Composants réutilisables dans `components/ui/`
+- `"use client"` uniquement quand nécessaire (hooks, interactions)
+- Sauvegarde auto avec debounce (~300ms)
+- Largeur max contenu : 1024px, centré
+- Bottom nav fixe sur mobile ; rail latéral sur desktop (≥1024px)
+
+## Fichiers projet à maintenir
+- `PM.md` : roadmap
+- `CHANGELOG.md` : journal des changements (date + version)
+- `.cursorrules` : ce fichier
+
+## Règles Nuzlocke (V1)
+- 1 capture par zone (premier rencontré)
+- Échec de capture = zone ratée (grisée)
+- Pokémon KO = mort (hors scope tracking V1)
+- Surnom encouragé
+- Pas de règle doublons
+
+## PokéAPI
+- Species pour noms FR : `/api/v2/pokemon-species/{id}`
+- Sprites : via variety par défaut → `/api/v2/pokemon/{id}`
+- Toujours passer par le cache (`lib/pokemon/cache.ts`)
+
+## Ne pas faire en V1
+- Backend, auth, base de données distante
+- Statut/niveau des Pokémon
+- Règle des doublons
