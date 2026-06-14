@@ -1,5 +1,7 @@
 import type { Game, GymBadge, LeagueCheckpoint, ZoneList } from "@/types/game";
 import { buildProgressBlocks } from "@/lib/nuzlock/badges";
+import { galarSwshZones } from "./galar-swsh";
+import { kantoLgpeZones } from "./kanto-lgpe";
 import { sinnohBdspZones } from "./sinnoh-bdsp";
 
 export const GAMES: Game[] = [
@@ -17,10 +19,40 @@ export const GAMES: Game[] = [
     zoneListId: "sinnoh-bdsp",
     platform: "switch",
   },
+  {
+    id: "lgpe-pikachu",
+    name: "Pokémon Let's Go, Pikachu",
+    shortName: "Let's Go, Pikachu",
+    zoneListId: "kanto-lgpe",
+    platform: "switch",
+  },
+  {
+    id: "lgpe-evoli",
+    name: "Pokémon Let's Go, Évoli",
+    shortName: "Let's Go, Évoli",
+    zoneListId: "kanto-lgpe",
+    platform: "switch",
+  },
+  {
+    id: "swsh-epee",
+    name: "Pokémon Épée",
+    shortName: "Épée",
+    zoneListId: "galar-swsh",
+    platform: "switch",
+  },
+  {
+    id: "swsh-bouclier",
+    name: "Pokémon Bouclier",
+    shortName: "Bouclier",
+    zoneListId: "galar-swsh",
+    platform: "switch",
+  },
 ];
 
 const ZONE_LISTS: Record<string, ZoneList> = {
   "sinnoh-bdsp": sinnohBdspZones,
+  "kanto-lgpe": kantoLgpeZones,
+  "galar-swsh": galarSwshZones,
 };
 
 export function getGameById(id: string): Game | undefined {

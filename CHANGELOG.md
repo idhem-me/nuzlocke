@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.5.0] — 2026-06-14
+
+### Ajouté
+- Pokémon Épée et Bouclier (Nintendo Switch)
+- Liste des zones Galar partagée (`galar-swsh`) : 47 zones, 8 badges, checkpoint Ligue (Tarak, niv. 65)
+- Terres Sauvages (17 secteurs), routes 1–10, villes et lieux du jeu de base
+- Hors scope : Pass d'extension (Isolarmure, Couronneige)
+
+## [0.4.0] — 2026-06-14
+
+### Ajouté
+- Pokémon Let's Go, Pikachu et Let's Go, Évoli (Nintendo Switch)
+- Liste des zones Kanto partagée (`kanto-lgpe`) : 51 zones, 8 badges, checkpoint Ligue (Trace, niv. 57)
+- Zones post-ligue : Caverne Azurée, Cap de Céladopole (Red)
+- Guide d'intégration : `docs/integrer-un-jeu.md`
+
 ## [0.3.3] — 2026-06-14
 
 ### Ajouté
