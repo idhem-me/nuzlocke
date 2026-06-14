@@ -1,4 +1,5 @@
-import type { Game, ZoneList } from "@/types/game";
+import type { Game, GymBadge, LeagueCheckpoint, ZoneList } from "@/types/game";
+import { buildProgressBlocks } from "@/lib/nuzlock/badges";
 import { sinnohBdspZones } from "./sinnoh-bdsp";
 
 export const GAMES: Game[] = [
@@ -36,4 +37,28 @@ export function getZonesForGame(gameId: string) {
   const zoneList = getZoneListById(game.zoneListId);
   if (!zoneList) return [];
   return [...zoneList.zones].sort((a, b) => a.order - b.order);
+}
+
+export function getBadgesForGame(gameId: string): GymBadge[] {
+  const game = getGameById(gameId);
+  if (!game) return [];
+  const zoneList = getZoneListById(game.zoneListId);
+  return zoneList?.badges ?? [];
+}
+
+export function getLeagueForGame(gameId: string): LeagueCheckpoint | undefined {
+  const game = getGameById(gameId);
+  if (!game) return undefined;
+  const zoneList = getZoneListById(game.zoneListId);
+  return zoneList?.league;
+}
+
+export function getProgressBlocksForGame(gameId: string) {
+  const zones = getZonesForGame(gameId);
+  const badges = getBadgesForGame(gameId);
+  const league = getLeagueForGame(gameId);
+  if (!badges.length) {
+    return [{ id: "all", header: "Zones", zones }];
+  }
+  return buildProgressBlocks(zones, badges, league);
 }

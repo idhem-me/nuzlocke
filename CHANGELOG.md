@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.3.3] — 2026-06-14
+
+### Ajouté
+- Regroupement des zones par badge d'arène avec level cap et icône de type PokéAPI
+- Checkpoint Ligue Pokémon (Cynthia, niv. max 66)
+- Sections « Post-ligue » et « Autres »
+
+### Modifié
+- Ordre des zones Sinnoh réorganisé par progression des badges (Mine → Givre → Phare → Ligue), zones post-champion déplacées après la Ligue
+
 ## [0.3.2] — 2026-06-12
 
 ### Corrigé

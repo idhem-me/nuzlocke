@@ -18,11 +18,11 @@ export function PokemonSprite({
     return (
       <div
         className={cn(
-          "flex items-center justify-center rounded-[var(--md-shape-corner-small)]",
+          "flex aspect-square max-h-full max-w-full items-center justify-center rounded-[var(--md-shape-corner-small)]",
           "bg-[var(--md-sys-color-surface-container)]",
           className,
         )}
-        style={{ width: size, height: size }}
+        style={{ width: size, height: size, maxHeight: "100%", maxWidth: "100%" }}
         aria-hidden
       >
         <span className="text-2xl opacity-30">?</span>
@@ -36,7 +36,8 @@ export function PokemonSprite({
       alt={name}
       width={size}
       height={size}
-      className={cn("object-contain", className)}
+      className={cn("shrink-0 object-contain", className)}
+      style={{ width: size, height: size, maxWidth: "100%", maxHeight: "100%" }}
       unoptimized
     />
   );

@@ -192,9 +192,13 @@ body {
 
 /* State layer utility */
 .md-state-layer {
-  position: relative;
   overflow: hidden;
   isolation: isolate;
+}
+
+/* Ne pas écraser position: fixed | sticky | absolute (ex. FAB) */
+.md-state-layer:not(.fixed):not(.sticky):not(.absolute) {
+  position: relative;
 }
 
 .md-state-layer::before {
@@ -231,6 +235,212 @@ body {
 .md-state-layer:disabled::before,
 .md-state-layer[aria-disabled="true"]::before {
   opacity: 0;
+}
+
+/* MD3 Switch — aligné sur material-web (v0.192) */
+.md-switch {
+  display: inline-flex;
+  vertical-align: top;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.md-switch--disabled {
+  cursor: default;
+}
+
+.md-switch__container {
+  position: relative;
+  flex-shrink: 0;
+  width: 52px;
+  height: 32px;
+  border-radius: var(--md-shape-corner-full);
+}
+
+.md-switch__input {
+  appearance: none;
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  width: max(100%, 48px);
+  height: max(100%, 48px);
+  margin: 0;
+  transform: translate(-50%, -50%);
+  cursor: inherit;
+  background: none;
+  outline: none;
+}
+
+.md-switch__track {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: inherit;
+}
+
+.md-switch__track::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  border-radius: inherit;
+  transition:
+    background-color 67ms linear,
+    border-color 67ms linear,
+    opacity 67ms linear;
+}
+
+.md-switch:not(.md-switch--selected) .md-switch__track::before {
+  background-color: var(--md-sys-color-surface-container-highest);
+  border: 2px solid var(--md-sys-color-outline);
+}
+
+.md-switch--selected .md-switch__track::before {
+  background-color: var(--md-sys-color-primary);
+  border: 2px solid transparent;
+}
+
+.md-switch:hover:not(.md-switch--disabled):not(.md-switch--selected)
+  .md-switch__track::before {
+  background-color: var(--md-sys-color-surface-container-highest);
+  border-color: var(--md-sys-color-outline);
+}
+
+.md-switch:hover:not(.md-switch--disabled).md-switch--selected
+  .md-switch__track::before {
+  background-color: var(--md-sys-color-primary);
+}
+
+.md-switch__input:focus-visible ~ .md-switch__track::before {
+  outline: 2px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+}
+
+.md-switch--disabled:not(.md-switch--selected) .md-switch__track::before {
+  background-color: var(--md-sys-color-surface-container-highest);
+  border-color: var(--md-sys-color-on-surface);
+  opacity: 0.12;
+}
+
+.md-switch--disabled.md-switch--selected .md-switch__track::before {
+  background-color: var(--md-sys-color-on-surface);
+  border-color: transparent;
+  opacity: 1;
+}
+
+.md-switch__handle-container {
+  position: relative;
+  display: flex;
+  place-items: center;
+  place-content: center;
+  height: 100%;
+  transition: margin 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.md-switch:not(.md-switch--selected) .md-switch__handle-container {
+  margin-inline-end: 20px;
+}
+
+.md-switch--selected .md-switch__handle-container {
+  margin-inline-start: 20px;
+}
+
+.md-switch--disabled .md-switch__handle-container {
+  transition: none;
+}
+
+.md-switch__ripple {
+  position: absolute;
+  z-index: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--md-shape-corner-full);
+  pointer-events: none;
+}
+
+.md-switch__handle {
+  position: relative;
+  z-index: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--md-shape-corner-full);
+  transform-origin: center;
+  transition:
+    width 250ms cubic-bezier(0.2, 0, 0, 1),
+    height 250ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+.md-switch__handle::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  transition: background-color 67ms linear;
+}
+
+.md-switch:not(.md-switch--selected) .md-switch__handle::before {
+  background-color: var(--md-sys-color-outline);
+}
+
+.md-switch--selected .md-switch__handle {
+  width: 24px;
+  height: 24px;
+}
+
+.md-switch--selected .md-switch__handle::before {
+  background-color: var(--md-sys-color-on-primary);
+}
+
+.md-switch:hover:not(.md-switch--disabled):not(.md-switch--selected)
+  .md-switch__handle::before {
+  background-color: var(--md-sys-color-on-surface-variant);
+}
+
+.md-switch:hover:not(.md-switch--disabled).md-switch--selected
+  .md-switch__handle::before {
+  background-color: var(--md-sys-color-primary-container);
+}
+
+.md-switch:active:not(.md-switch--disabled) .md-switch__handle {
+  width: 28px;
+  height: 28px;
+  transition-duration: 100ms;
+  transition-timing-function: linear;
+}
+
+.md-switch--disabled:not(.md-switch--selected) .md-switch__handle::before {
+  background-color: var(--md-sys-color-on-surface);
+  opacity: 0.38;
+}
+
+.md-switch--disabled.md-switch--selected .md-switch__handle::before {
+  background-color: var(--md-sys-color-surface);
+  opacity: 1;
+}
+
+@media (hover: hover) {
+  .md-switch:hover:not(.md-switch--disabled) .md-switch__ripple {
+    background-color: var(--md-sys-color-on-surface);
+    opacity: var(--md-state-hover);
+  }
+
+  .md-switch--selected:hover:not(.md-switch--disabled) .md-switch__ripple {
+    background-color: var(--md-sys-color-primary);
+    opacity: var(--md-state-hover);
+  }
+}
+
+.md-switch:active:not(.md-switch--disabled) .md-switch__ripple {
+  background-color: var(--md-sys-color-on-surface);
+  opacity: var(--md-state-pressed);
+}
+
+.md-switch--selected:active:not(.md-switch--disabled) .md-switch__ripple {
+  background-color: var(--md-sys-color-primary);
+  opacity: var(--md-state-pressed);
 }
 
 /* Safe area for iOS notch / home indicator */

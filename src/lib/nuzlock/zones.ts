@@ -1,5 +1,28 @@
 import type { Capture } from "@/types/capture";
+import type { Zone } from "@/types/game";
 import type { Nuzlock } from "@/types/nuzlock";
+
+export function normalizeForSearch(text: string): string {
+  return text
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .toLowerCase();
+}
+
+export function matchesZoneSearch(zone: Zone, query: string): boolean {
+  const normalizedQuery = normalizeForSearch(query.trim());
+  if (!normalizedQuery) return true;
+
+  const haystack = normalizeForSearch(
+    `${zone.name} ${zone.note ?? ""} ${zone.id.replace(/-/g, " ")}`,
+  );
+
+  return haystack.includes(normalizedQuery);
+}
+
+export function filterZonesByQuery(zones: Zone[], query: string): Zone[] {
+  return zones.filter((zone) => matchesZoneSearch(zone, query));
+}
 
 export function isZoneFilled(capture: Capture | null | undefined): boolean {
   if (!capture) return false;
@@ -7,7 +30,11 @@ export function isZoneFilled(capture: Capture | null | undefined): boolean {
 }
 
 export function getCaptureDisplayName(capture: Capture): string {
-  if (capture.captureFailed) return "Échec de capture";
+  if (capture.captureFailed) {
+    const speciesName = capture.speciesName.trim();
+    if (speciesName) return speciesName;
+    return "Échec de capture";
+  }
   const nickname = capture.nickname.trim();
   if (nickname) return nickname;
   return capture.speciesName.trim() || "Pokémon";

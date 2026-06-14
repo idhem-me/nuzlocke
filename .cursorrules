@@ -35,6 +35,7 @@ src/
 
 ## Conventions code
 - Composants réutilisables dans `components/ui/`
+- **Composants UI (MD3)** : avant d'ajouter un composant UI, vérifier s'il existe déjà dans `src/components/ui/` (Button, Card, Dialog, Switch, etc.) et le réutiliser ou l'étendre. Sinon, l'implémenter selon Material Design 3 (tokens `--md-sys-*`, state layers, specs MD3). Si le composant n'existe pas en MD3 ou dans la librairie du projet, **demander à l'utilisateur** avant de créer une solution custom.
 - `"use client"` uniquement quand nécessaire (hooks, interactions)
 - Sauvegarde auto avec debounce (~300ms)
 - Largeur max contenu : 1024px, centré

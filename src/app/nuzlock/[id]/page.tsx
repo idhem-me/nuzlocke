@@ -2,8 +2,14 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-import { getZonesForGame } from "@/data/games";
-import { areAllZonesCollapsed, isZoneCollapsed } from "@/lib/nuzlock/zones";
+import { getProgressBlocksForGame, getZonesForGame } from "@/data/games";
+import { ProgressBlockSection } from "@/components/nuzlock/ProgressBlockSection";
+import {
+  areAllZonesCollapsed,
+  filterZonesByQuery,
+  isZoneCollapsed,
+} from "@/lib/nuzlock/zones";
+import { ZoneSearchFab } from "@/components/nuzlock/ZoneSearchFab";
 import { getGameLabel } from "@/lib/storage/nuzlock-store";
 import { formatDateTime } from "@/lib/utils/date";
 import { ZoneRow } from "@/components/nuzlock/ZoneRow";
@@ -44,9 +50,14 @@ export default function NuzlockDetailPage() {
   const { show: showSnackbar } = useSnackbar();
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [zoneSearchOpen, setZoneSearchOpen] = useState(false);
+  const [zoneQuery, setZoneQuery] = useState("");
   const menuAnchorRef = useRef<HTMLDivElement>(null);
 
   const zones = nuzlock ? getZonesForGame(nuzlock.gameId) : [];
+  const visibleZones = filterZonesByQuery(zones, zoneQuery);
+  const progressBlocks = nuzlock ? getProgressBlocksForGame(nuzlock.gameId) : [];
+  const isSearching = zoneQuery.trim().length > 0;
   const zoneIds = zones.map((zone) => zone.id);
   const showCollapseToggle = zones.length > 0;
   const allZonesCollapsed = nuzlock
@@ -154,28 +165,50 @@ export default function NuzlockDetailPage() {
         )}
 
         {nuzlock && (
-          <div className="flex flex-col gap-3">
-            {zones.map((zone) => (
-              <ZoneRow
-                key={zone.id}
-                zone={zone}
-                capture={nuzlock.captures[zone.id] ?? null}
-                collapsed={isZoneCollapsed(nuzlock, zone.id)}
-                onToggleCollapse={(collapsed) =>
-                  toggleZoneCollapsed(zone.id, collapsed)
-                }
-                onSave={async (capture) => {
-                  await saveCapture(zone.id, capture);
-                }}
-                onReset={async () => {
-                  await clearZone(zone.id);
-                }}
-                searchPokemon={search}
-              />
-            ))}
+          <div className="flex flex-col gap-6 pb-[calc(var(--fab-size)+max(1rem,env(safe-area-inset-bottom,0px))+1rem)] lg:pb-[calc(var(--fab-size)+2rem)]">
+            {isSearching
+              ? visibleZones.map((zone) => (
+                  <ZoneRow
+                    key={zone.id}
+                    zone={zone}
+                    capture={nuzlock.captures[zone.id] ?? null}
+                    collapsed={isZoneCollapsed(nuzlock, zone.id)}
+                    onToggleCollapse={(collapsed) =>
+                      toggleZoneCollapsed(zone.id, collapsed)
+                    }
+                    onSave={async (capture) => {
+                      await saveCapture(zone.id, capture);
+                    }}
+                    onReset={async () => {
+                      await clearZone(zone.id);
+                    }}
+                    searchPokemon={search}
+                  />
+                ))
+              : progressBlocks.map((block) => (
+                  <ProgressBlockSection
+                    key={block.id}
+                    block={block}
+                    nuzlock={nuzlock}
+                    onToggleCollapse={toggleZoneCollapsed}
+                    onSave={saveCapture}
+                    onReset={clearZone}
+                    searchPokemon={search}
+                  />
+                ))}
           </div>
         )}
       </PageContainer>
+
+      {nuzlock && zones.length > 0 && (
+        <ZoneSearchFab
+          open={zoneSearchOpen}
+          query={zoneQuery}
+          resultCount={visibleZones.length}
+          onOpenChange={setZoneSearchOpen}
+          onQueryChange={setZoneQuery}
+        />
+      )}
 
       <Dialog
         open={deleteOpen}

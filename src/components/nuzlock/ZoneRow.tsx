@@ -23,7 +23,7 @@ import {
   IconExpandMore,
   IconRefresh,
 } from "@/components/ui/Icons";
-import { Checkbox } from "@/components/ui/Checkbox";
+import { Switch } from "@/components/ui/Switch";
 import { TextField } from "@/components/ui/TextField";
 import { PokemonAutocomplete } from "./PokemonAutocomplete";
 import { PokemonSprite } from "./PokemonSprite";
@@ -83,7 +83,6 @@ export function ZoneRow({
   const [formOpen, setFormOpen] = useState(!collapsed);
   const collapseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFailed = local.captureFailed;
-  const isDisabled = isFailed;
   const hasData = isZoneFilled(capture);
   const isCollapsed = collapsed;
 
@@ -170,16 +169,40 @@ export function ZoneRow({
   );
 
   const formFields = (
-    <div className="flex items-start gap-3">
-      <PokemonSprite
-        src={local.spriteUrl}
-        name={local.speciesName || "Pokémon"}
-        className={cn("mt-6 shrink-0", isFailed && "opacity-50")}
-      />
+    <div className="flex items-stretch gap-3">
+      <div className="flex w-14 shrink-0 flex-col gap-3">
+        <div
+          className={cn(
+            "flex min-h-0 flex-1 items-center justify-center",
+            isFailed && "opacity-50",
+          )}
+        >
+          <PokemonSprite
+            src={local.spriteUrl}
+            name={local.speciesName || "Pokémon"}
+            className="max-h-full max-w-full"
+            size={68}
+          />
+        </div>
+        <Switch
+          className="mx-auto shrink-0"
+          checked={!local.captureFailed}
+          aria-label={
+            local.captureFailed ? "Échec de capture" : "Capture active"
+          }
+          onChange={(e) => {
+            const failed = !e.target.checked;
+            update({
+              captureFailed: failed,
+              ...(failed ? { nickname: "" } : {}),
+            });
+          }}
+        />
+      </div>
       <div className="flex min-w-0 flex-1 flex-col gap-3">
         <PokemonAutocomplete
           value={local.speciesName}
-          disabled={isDisabled}
+          disabled={false}
           onChange={(v) =>
             update({
               speciesName: v,
@@ -194,27 +217,8 @@ export function ZoneRow({
           label="Surnom"
           placeholder="Facultatif"
           value={local.nickname}
-          disabled={isDisabled}
+          disabled={isFailed}
           onChange={(e) => update({ nickname: e.target.value })}
-        />
-        <Checkbox
-          label="Échec de capture"
-          checked={local.captureFailed}
-          disabled={false}
-          onChange={(e) => {
-            const failed = e.target.checked;
-            update({
-              captureFailed: failed,
-              ...(failed
-                ? {
-                    speciesId: null,
-                    speciesName: "",
-                    spriteUrl: null,
-                    nickname: "",
-                  }
-                : {}),
-            });
-          }}
         />
       </div>
     </div>
@@ -222,7 +226,7 @@ export function ZoneRow({
 
   if (isCollapsed) {
     return (
-      <div className={cardClassName}>
+      <div id={`zone-${zone.id}`} className={cardClassName}>
         <button
           type="button"
           onClick={handleExpand}
@@ -251,14 +255,12 @@ export function ZoneRow({
           />
           {hasData ? (
             <>
-              {!isFailed && (
-                <PokemonSprite
-                  src={local.spriteUrl}
-                  name={local.speciesName || "Pokémon"}
-                  size={32}
-                  className="shrink-0"
-                />
-              )}
+              <PokemonSprite
+                src={local.spriteUrl}
+                name={local.speciesName || "Pokémon"}
+                size={32}
+                className={cn(isFailed && "opacity-50")}
+              />
               <span
                 className={cn(
                   "md-body-medium min-w-0 flex-1 truncate",
@@ -290,7 +292,7 @@ export function ZoneRow({
   }
 
   return (
-    <div className={cn(cardClassName, "p-4")}>
+    <div id={`zone-${zone.id}`} className={cn(cardClassName, "p-4")}>
       <div className="mb-3 flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <h3
