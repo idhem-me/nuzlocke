@@ -60,3 +60,13 @@ Voir `.cursorrules` et `PM.md` pour le contexte projet et la roadmap.
 ## Licence
 
 Projet personnel — usage libre.
+
+## Export du catalogue Pokémon
+
+`python3 scripts/export-pokemon.py` génère `exports/pokemon/` à partir des
+sources PokéAPI utilisées par Nuzlocke. Le catalogue couvre les espèces 1 à
+1 025 et contient les noms, les générations, les types et les chemins des sprites
+de face normaux et shiny. Les icônes de type sont dans `types/`.
+
+Le portfolio utilise une copie de `catalogue.json` dans `src/features/pokemon/`
+et les dossiers `sprites/`, `shiny/` et `types/` dans `public/pokemon/`.
