@@ -8,6 +8,7 @@ interface NavigationRailDestinationProps {
   label: string;
   icon: ReactNode;
   active?: boolean;
+  documentNavigation?: boolean;
 }
 
 /** Destination rail MD3 — gélule active autour de l'icône, label en dessous. */
@@ -16,10 +17,14 @@ export function NavigationRailDestination({
   label,
   icon,
   active = false,
+  documentNavigation = false,
 }: NavigationRailDestinationProps) {
+  const Destination = documentNavigation ? "a" : Link;
+
   return (
-    <Link
+    <Destination
       href={href}
+      rel={documentNavigation ? "noreferrer" : undefined}
       aria-current={active ? "page" : undefined}
       className={cn(
         stateLayer(),
@@ -54,7 +59,7 @@ export function NavigationRailDestination({
       >
         {label}
       </span>
-    </Link>
+    </Destination>
   );
 }
 

@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
 import { NavigationBar, NavigationDestination } from "@/components/ui/NavigationBar";
-import { NAV_ITEMS } from "./NavItems";
+import { NAV_ITEMS, RULES_PATH } from "./NavItems";
 
 export function BottomNav() {
   const pathname = usePathname();
@@ -26,6 +26,7 @@ export function BottomNav() {
             label={item.label}
             icon={item.icon}
             active={active}
+            documentNavigation={pathname === RULES_PATH || item.href === RULES_PATH}
           />
         );
       })}

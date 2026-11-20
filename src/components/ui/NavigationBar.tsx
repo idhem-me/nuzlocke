@@ -8,6 +8,7 @@ interface NavigationDestinationProps {
   label: string;
   icon: ReactNode;
   active?: boolean;
+  documentNavigation?: boolean;
 }
 
 /** Destination MD3 — gélule active autour de l'icône uniquement, label stable en dessous. */
@@ -16,10 +17,14 @@ export function NavigationDestination({
   label,
   icon,
   active = false,
+  documentNavigation = false,
 }: NavigationDestinationProps) {
+  const Destination = documentNavigation ? "a" : Link;
+
   return (
-    <Link
+    <Destination
       href={href}
+      rel={documentNavigation ? "noreferrer" : undefined}
       aria-current={active ? "page" : undefined}
       className={cn(
         "flex min-w-0 flex-1 flex-col items-center",
@@ -55,7 +60,7 @@ export function NavigationDestination({
       >
         {label}
       </span>
-    </Link>
+    </Destination>
   );
 }
 

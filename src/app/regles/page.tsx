@@ -3,6 +3,7 @@ import { TopAppBar } from "@/components/ui/TopAppBar";
 import { Card } from "@/components/ui/Card";
 import { NUZLOCKE_NOTES, NUZLOCKE_RULES } from "@/data/rules";
 import { RulesAnalytics } from "./RulesAnalytics";
+import { RulesClarity } from "./RulesClarity";
 
 export default function ReglesPage() {
   return (
@@ -37,6 +38,7 @@ export default function ReglesPage() {
           </ul>
         </Card>
         <RulesAnalytics />
+        <RulesClarity />
       </PageContainer>
     </>
   );
