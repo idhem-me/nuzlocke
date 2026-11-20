@@ -1,6 +1,8 @@
 import { IconAdd, IconList, IconRules } from "@/components/ui/Icons";
 import type { ReactNode } from "react";
 
+export const RULES_PATH = "/regles";
+
 export interface NavItem {
   href: string;
   label: string;
@@ -21,7 +23,7 @@ export const NAV_ITEMS: NavItem[] = [
     icon: <IconAdd size={24} />,
   },
   {
-    href: "/regles",
+    href: RULES_PATH,
     label: "Règles",
     icon: <IconRules size={24} />,
   },

@@ -6,7 +6,7 @@ import {
   NavigationRail,
   NavigationRailDestination,
 } from "@/components/ui/NavigationRail";
-import { NAV_ITEMS } from "./NavItems";
+import { NAV_ITEMS, RULES_PATH } from "./NavItems";
 
 export function SideNav() {
   const pathname = usePathname();
@@ -27,6 +27,7 @@ export function SideNav() {
             label={item.label}
             icon={item.icon}
             active={active}
+            documentNavigation={pathname === RULES_PATH || item.href === RULES_PATH}
           />
         );
       })}
